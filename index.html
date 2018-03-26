@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <title>OCR</title>
   <style>
-    .container{font-family: arial; width: 500px; margin-top: 100px; padding: 15px;
+    .container{font-family: arial; width: 50rem; margin-top: 5rem; padding: 1rem;
                margin-left: auto; margin-right: auto; background-color: #dee8f7;
-               border-radius: 10px;}
+               border-radius: 1rem;}
     h1{text-align: center;}
-    .upload{margin-bottom: 25px;}
-    .thumbnail{max-width: 500px;}
-    .progress{height: 25px; width: 100%; margin: 25px 0px; box-sizing: border-box;
-              border: 1px solid blue; border-radius: 7px;}
-    .progress-bar{height: 100%; width: 0%; background-color: blue;}
+    .upload{margin-bottom: 1rem;}
+    .thumbnail{max-width: 100%;}
+    .progress-wrapper{height: 2rem; width: 100%; margin: 1rem 0%; box-sizing: border-box;
+                      border: 1px solid blue; border-radius: 0.5rem;}
+    .progress{height: 100%; width: 0%; background-color: blue;}
   </style>
 </head>
 <body>
@@ -22,8 +22,8 @@
   <input class="upload" type="file">
   <img class="thumbnail">
 
-  <div class="progress">
-    <div class="progress-bar"></div>
+  <div class="progress-wrapper">
+    <div class="progress"></div>
   </div>
 
   <p class="results"></p>
@@ -38,7 +38,7 @@
   var updateProgress = function(p) {
     if (p.status != 'recognizing text') { return; }
     var progress = Math.round(p.progress * 100.0);
-    $('.progress-bar').style.width = progress + '%';
+    $('.progress').style.width = progress + '%';
   }
 
   var printResults = function(results) {
