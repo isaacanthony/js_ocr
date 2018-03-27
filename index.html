@@ -10,6 +10,7 @@
     h1{text-align: center;}
     .upload{font-size: 1.5rem;}
     .upload{margin-bottom: 1rem;}
+    .thumbnail-wrapper{text-align: center;}
     .thumbnail{max-width: 100%;}
     .progress-wrapper{height: 2rem; width: 100%; margin: 1rem 0%; box-sizing: border-box;
                       border: 1px solid blue; border-radius: 0.5rem;}
@@ -21,7 +22,10 @@
   <h1>OCR</h1>
 
   <input class="upload" type="file">
-  <img class="thumbnail">
+
+  <div class="thumbnail-wrapper">
+    <img class="thumbnail">
+  </div>
 
   <div class="progress-wrapper">
     <div class="progress"></div>
@@ -33,6 +37,8 @@
 <script src='https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js'></script>
 <script>
 (function() {
+  const SIZE = 500;
+
   var $ = function(kls) {
     return document.querySelector(kls);
   }
@@ -46,12 +52,50 @@
     $('.results').innerHTML = results.text;
   };
 
-  var process = function(photo) {
+  var resize = function(photo) {
+    var canvas = document.createElement('canvas');
+    canvas.height = SIZE;
+    canvas.width  = SIZE;
+    var ctx = canvas.getContext('2d');
+
+    if (photo.width > photo.height) {
+      if (photo.width != SIZE) {
+        photo.height *= SIZE / photo.width;
+        photo.width = SIZE;
+        canvas.height = photo.height;
+      }
+    } else {
+      if (photo.height != SIZE) {
+        photo.width *= SIZE / photo.height;
+        photo.height = SIZE;
+        canvas.width = photo.width;
+      }
+    }
+
+    ctx.drawImage(photo, 0, 0, photo.width, photo.height);
+    return canvas.toDataURL('image/png');
+  };
+
+  var show = function(photo) {
+    $('.thumbnail').src = photo;
+  };
+
+  var recognize = function(photo) {
     Tesseract.recognize(photo)
              .progress(function(p) { updateProgress(p); })
              .then(function(results) { printResults(results); });
+  };
 
-    $('.thumbnail').src = photo;
+  var process = function(dataUrl) {
+    printResults({'text': null});
+    var photo = new Image;
+    photo.src = dataUrl;
+
+    photo.onload = function() {
+      var resizedPhoto = resize(photo);
+      show(resizedPhoto);
+      recognize(resizedPhoto);
+    };
   };
 
   $('.upload').onchange = function(evt) {
